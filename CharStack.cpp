@@ -66,10 +66,10 @@ CharStack::~CharStack(){
 	delete next;
 } // stergerea listei prin stergerea tuturor nodurilor
 
-std::ostream& operator<<(std::ostream& out, CharStack stack){
+std::ostream& operator<<(std::ostream& out, CharStack& stack){
 	Node* tmp;
-	out << stack.Top() << ' ';
-
+	tmp = stack.top;
+	out << tmp -> GetValue() << ' ';
 	while(tmp -> GetNext() != NULL){
 		tmp = tmp -> GetNext();
 		out << tmp -> GetValue() << ' ';
@@ -78,15 +78,30 @@ std::ostream& operator<<(std::ostream& out, CharStack stack){
 } // afisarea intregii stive
 
 
-std::istream& operator>>(std::istream& in, CharStack stack){
+std::istream& operator>>(std::istream& in, CharStack& stack){
 	char c;
 	in >> c;
 	stack.Push(c);
 	return in;
 } // citirea de la standard in in stack
 
-//TODO: constructor (init si copiere + "=" overloading), << si >>, si FUNCTIE pt citirea a n obiecte
-
+void ReadPrintn(CharStack s, int n){
+	for(int i = 0; i<n; i++){
+		char chr;
+		std::cin>>chr;
+		s.Push(chr);
+	}
+	std::cout<<s;
+}
+		
 int main(){
+	CharStack s;
+	char chr[100];
+	std::cin>>chr;
+	int i = 0;
+	while(chr[i] != '0'){
+		s.Push(chr[i]);
+	}
+	std::cout<<s;
 	return 0;
 }
