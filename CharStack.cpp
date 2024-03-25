@@ -12,11 +12,44 @@ CharStack::CharStack(char value){
 } // initializam lista cu o valoare
 
 CharStack::CharStack(const CharStack& stack){
-	top = stack.top;
-} //constructor de copiere
+	if(stack.top == NULL)
+		top = stack.top;
+	else{
+	Node* tmp;
+	tmp = stack.top;
+	Node* back = new Node;
+	back -> SetValue(stack.top -> GetValue()) ;
+	top  = back;
+	while(tmp -> GetNext() != NULL){
+		tmp = tmp -> GetNext();
+		Node* n = new Node;
+		back -> SetNext(n);
+		n -> SetValue(tmp -> GetValue());
+		back = n;
+		back -> SetNext(NULL);
+	}
+	}
+
+} //constructor de copiere, parcurege lista elem cu elem si o creeaza pe a doua elem cu elem
 
 CharStack& CharStack::operator=(const CharStack& stack){
-	top = stack.top;
+	if(stack.top == NULL)
+		top = stack.top;
+	else{
+	Node* tmp;
+	tmp = stack.top;
+	Node* back = new Node;
+	back -> SetValue(stack.top -> GetValue()) ;
+	top  = back;
+	while(tmp -> GetNext() != NULL){
+		tmp = tmp -> GetNext();
+		Node* n = new Node;
+		back -> SetNext(n);
+		n -> SetValue(tmp -> GetValue());
+		back = n;
+		back -> SetNext(NULL);
+	}
+	}
 	return *this;
 }//overloading la =
 
@@ -28,7 +61,7 @@ void CharStack::Push(char value){
 	}
 	else {
 		Node* n = new Node;
-		n -> SetNext(top); //nu merge cu &top?
+		n ->SetNext(top); //nu merge cu &top?
 		n -> SetValue(value);
 		top = n;
 	} //adauga un nod la inceputul stack-ului
@@ -37,7 +70,7 @@ void CharStack::Push(char value){
 char CharStack::Pop(){
 	char value = top -> GetValue();
 	Node* tmp = top;
-	top = top -> GetNext(); // vezi daca merge atribuirea asa, s-ar putea sa nu pt ca nu am dat operator overload la Nod*
+	top = top -> GetNext(); 
 	delete tmp;	
 	return value;
 } // aceasta metoda tine loc de getter
@@ -54,54 +87,92 @@ bool CharStack::IsEmpty(){
 } //verificam daca nodul top a fost initializat si nu este o lista in sine
 
 CharStack::~CharStack(){
+	if(top == NULL || top ->GetNext() == NULL) //altfel dadea erori
+		delete top;
+	else{
 	Node* tmp;
-        Node* next;
 	tmp = top;
-	while(tmp -> GetNext() != NULL){
-		next = tmp-> GetNext();
+	while(top -> GetNext() != NULL){
+		top = top -> GetNext();
 		delete tmp;
-		Node* tmp = next;
+	       	tmp = top;
 	}
-	delete tmp;
-	delete next;
+	}
 } // stergerea listei prin stergerea tuturor nodurilor
 
 std::ostream& operator<<(std::ostream& out, CharStack& stack){
 	Node* tmp;
 	tmp = stack.top;
-	out << tmp -> GetValue() << ' ';
+	out << tmp -> GetValue();
 	while(tmp -> GetNext() != NULL){
 		tmp = tmp -> GetNext();
-		out << tmp -> GetValue() << ' ';
+		out << tmp -> GetValue();
 	}
 	return out;
 } // afisarea intregii stive
 
 
 std::istream& operator>>(std::istream& in, CharStack& stack){
-	char c;
+	char c[101];
 	in >> c;
-	stack.Push(c);
-	return in;
-} // citirea de la standard in in stack
-
-void ReadPrintn(CharStack s, int n){
-	for(int i = 0; i<n; i++){
-		char chr;
-		std::cin>>chr;
-		s.Push(chr);
+	int i = 0;
+	while(c[i] != '\0'){
+		stack.Push(c[i]);
+		i++;
 	}
-	std::cout<<s;
+	return in;
+} // citirea de la standard in in stack, maxim 100 de caractere in un cuvant
+
+void ReadPrintN(int n){
+	CharStack sir[n]; //instantam un array de stak-uri
+	for(int i = 0; i<n; i++){
+		CharStack s;
+		std::cin>>sir[i];
+	}
+	for(int i=0; i<n; i++){
+		std::cout<<sir[i]<<'\n';
+	}
 }
 		
+
 int main(){
+	/* //sectiunea de testare a metodelor
 	CharStack s;
-	char chr[100];
-	std::cin>>chr;
-	int i = 0;
-	while(chr[i] != '0'){
-		s.Push(chr[i]);
+	s.Push('v');
+	std::cout<<s<<'\n'; //merge cout pt un sg char, merge push
+	s.Push('u');
+	std::cout<<s<<'\n'; //merge sa dau cout la mai multe noduri, destructor-ul merge pt ambele cazuri acum 
+	s.Push('c');
+	//std::cin>>s; //merge
+	//std::cin>>s>>s; //merge si asa
+	std::cout<<s<<'\n';//merge cin, cout	
+	//s.Pop();
+	//std::cout<<s<<'\n'; //merge si pop
+	CharStack a(s);
+	std::cout<<a<<'\n';
+	CharStack cuv;
+	std::cout<<cuv.IsEmpty()<<'\n';//merge si IsEmpty
+	cuv = s;
+	std::cout<<cuv<<'\n'; //merg constructorii de copiere si overloading la =
+	std::cout<<cuv.Top()<<'\n';//merge si Top()
+	*/	
+
+	CharStack l;
+	std::cin>>l;	
+	std::cout<<l<<'\n'; 
+
+	/*char chr[4] = "luc";
+	CharStack inversare;
+	for(int i =0; i<4; i++){
+		inversare.Push(chr[i]);
 	}
-	std::cout<<s;
+	std::cout<<inversare; //inversarea pt un char declarat in program
+	
+	int n;
+	std::cin>>n;
+	ReadPrintN(n); //verificarea functiei pt citirea, memorarea si afisarea a n stack-uri
+	*/
+	
 	return 0;
 }
+
